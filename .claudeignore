@@ -1,0 +1,4 @@
+# Ignore secrets from Claude Code
+.env
+backend/.env
+frontend/.env
