@@ -1,6 +1,5 @@
 import os
-from flask import Flask, jsonify
-from flask_cors import CORS
+from flask import Flask, jsonify, request
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -8,23 +7,39 @@ load_dotenv()
 flask_app = Flask(__name__)
 flask_app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
-DEFAULT_ORIGINS = [
+ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 env_origins = os.getenv("CORS_ORIGINS", "")
-extra_origins = [o.strip() for o in env_origins.split(",") if o.strip()]
-CORS_ORIGINS = DEFAULT_ORIGINS + extra_origins
+ALLOWED_ORIGINS += [o.strip() for o in env_origins.split(",") if o.strip()]
 
-CORS(
-    flask_app,
-    origins=CORS_ORIGINS,
-    methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["Content-Type", "Authorization"],
-    supports_credentials=True,
-)
+
+@flask_app.before_request
+def handle_preflight():
+    if request.method == 'OPTIONS':
+        origin = request.headers.get('Origin', '')
+        res = flask_app.make_default_options_response()
+        if origin in ALLOWED_ORIGINS:
+            res.headers['Access-Control-Allow-Origin'] = origin
+            res.headers['Access-Control-Allow-Credentials'] = 'true'
+            res.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+            res.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        return res
+
+
+@flask_app.after_request
+def add_cors(response):
+    origin = request.headers.get('Origin', '')
+    if origin in ALLOWED_ORIGINS:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+    return response
+
 
 from limiter import limiter
 limiter.init_app(flask_app)
