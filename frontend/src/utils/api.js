@@ -24,3 +24,9 @@ export async function getSubmissions(username, password) {
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
+
+export async function getResults() {
+  const res = await fetch(`${BASE}/api/results`)
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
