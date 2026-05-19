@@ -54,7 +54,10 @@ export default function ScorecardPage() {
   return (
     <div style={s.page}>
       <div style={s.container}>
-        <button style={s.backLink} onClick={() => navigate('/')}>← Back</button>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '28px' }}>
+          <button style={s.backLink} onClick={() => navigate('/results')}>← Back to Results</button>
+          <button style={s.logoutBtn} onClick={() => { sessionStorage.removeItem('dashboard_creds'); navigate('/login') }}>Sign out</button>
+        </div>
 
         <div style={s.header}>
           <div>
@@ -139,7 +142,8 @@ const s = {
   container: { maxWidth: '820px', margin: '0 auto' },
   center: { display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', gap: '16px' },
   spinner: { width: '32px', height: '32px', border: '3px solid var(--border)', borderTopColor: 'var(--gold)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' },
-  backLink: { background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '13px', cursor: 'pointer', padding: '0', marginBottom: '28px', fontFamily: 'inherit', fontWeight: '500' },
+  backLink: { background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '13px', cursor: 'pointer', padding: '0', fontFamily: 'inherit', fontWeight: '500' },
+  logoutBtn: { background: 'transparent', border: '1.5px solid var(--border)', color: 'var(--text-body)', borderRadius: '3px', padding: '7px 14px', fontSize: '12px', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' },
   backBtn: { background: 'var(--navy)', color: 'var(--white)', border: 'none', borderRadius: '3px', padding: '10px 20px', fontSize: '14px', fontWeight: '600', cursor: 'pointer', fontFamily: 'inherit' },
   header: { display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '28px', flexWrap: 'wrap', gap: '16px' },
   eyebrow: { display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' },

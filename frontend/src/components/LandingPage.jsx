@@ -56,7 +56,7 @@ export default function LandingPage() {
           <div style={s.metricChips}>
             <div style={s.chip}>6 Scoring Axes</div>
             <div style={s.chipDivider} />
-            <div style={s.chip}>GPT-4o Mini</div>
+            <div style={s.chip}>AI-Powered Analysis</div>
             <div style={s.chipDivider} />
             <div style={s.chip}>30 Second Results</div>
           </div>
@@ -81,7 +81,7 @@ export default function LandingPage() {
               {
                 num: '02',
                 title: 'AI Scores in 6 Axes',
-                desc: 'GPT-4o Mini evaluates Planning, AI Collaboration, Agent Orchestration, Debugging, Code Quality, Communication',
+                desc: 'AI evaluates Planning, AI Collaboration, Agent Orchestration, Debugging, Code Quality, and Communication',
               },
               {
                 num: '03',
@@ -95,6 +95,27 @@ export default function LandingPage() {
                 <p style={s.stepDesc}>{step.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PREVIEW */}
+      <section style={s.previewSection}>
+        <div style={s.sectionContainer}>
+          <div style={s.sectionEyebrow}>
+            <div style={s.eyebrowLine} />
+            <span style={s.eyebrowText}>Sample Output</span>
+          </div>
+          <h2 style={s.sectionH2}>What a scorecard looks like</h2>
+          <div style={s.previewFrame}>
+            <div style={s.previewBar}>
+              <div style={s.previewDots}>
+                <span style={{ ...s.dot, background: '#FF5F57' }} />
+                <span style={{ ...s.dot, background: '#FEBC2E' }} />
+                <span style={{ ...s.dot, background: '#28C840' }} />
+              </div>
+            </div>
+            <img src="/scorecard-preview.png" alt="Scorecard preview" style={s.previewImg} />
           </div>
         </div>
       </section>
@@ -263,6 +284,21 @@ const s = {
   },
   stepTitle: { fontSize: '16px', fontWeight: '700', color: 'var(--text-head)', marginBottom: '10px', letterSpacing: '-0.01em' },
   stepDesc: { fontSize: '14px', color: 'var(--text-body)', lineHeight: 1.65 },
+
+  /* PREVIEW */
+  previewSection: { background: 'var(--bg-light)', padding: '100px 0' },
+  previewFrame: {
+    border: '1px solid var(--border)', borderRadius: '10px',
+    overflow: 'hidden', boxShadow: '0 20px 60px rgba(10,22,40,0.12)',
+    background: '#fff',
+  },
+  previewBar: {
+    background: 'var(--bg-light)', borderBottom: '1px solid var(--border)',
+    padding: '10px 16px', display: 'flex', alignItems: 'center',
+  },
+  previewDots: { display: 'flex', gap: '6px' },
+  dot: { width: '10px', height: '10px', borderRadius: '50%', display: 'block' },
+  previewImg: { width: '100%', display: 'block' },
 
   /* SCORING AXES */
   scoringSection: { background: 'var(--bg-section)', padding: '100px 0' },

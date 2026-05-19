@@ -26,6 +26,9 @@ CORS(
     supports_credentials=True,
 )
 
+from limiter import limiter
+limiter.init_app(flask_app)
+
 from routes.analyze import analyze_bp
 from routes.submissions import submissions_bp
 from routes.submission import submission_bp

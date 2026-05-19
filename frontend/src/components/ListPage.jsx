@@ -23,6 +23,11 @@ function formatDate(iso) {
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
+function logout(navigate) {
+  sessionStorage.removeItem('dashboard_creds')
+  navigate('/login')
+}
+
 export default function ListPage() {
   const navigate = useNavigate()
   const [scrolled, setScrolled] = useState(false)
@@ -60,6 +65,7 @@ export default function ListPage() {
           <button style={s.navCta} onClick={() => navigate('/submit')}>
             Submit Transcript
           </button>
+          <button style={s.logoutBtn} onClick={() => logout(navigate)}>Sign out</button>
         </div>
       </nav>
 
@@ -189,6 +195,12 @@ const s = {
     background: 'var(--navy)', color: '#fff', border: 'none',
     borderRadius: '3px', cursor: 'pointer', letterSpacing: '0.01em',
     fontFamily: 'inherit',
+  },
+  logoutBtn: {
+    fontSize: '13px', fontWeight: '600', padding: '9px 16px',
+    background: 'transparent', color: 'var(--text-body)',
+    border: '1.5px solid var(--border)', borderRadius: '3px',
+    cursor: 'pointer', fontFamily: 'inherit',
   },
 
   /* PAGE BODY */

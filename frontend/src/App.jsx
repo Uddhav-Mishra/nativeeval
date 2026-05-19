@@ -4,6 +4,8 @@ import UploadPage from './components/UploadPage'
 import ListPage from './components/ListPage'
 import ScorecardPage from './components/ScorecardPage'
 import DashboardPage from './components/DashboardPage'
+import LoginPage from './components/LoginPage'
+import PrivateRoute from './components/PrivateRoute'
 
 export default function App() {
   return (
@@ -11,9 +13,10 @@ export default function App() {
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/submit" element={<UploadPage />} />
-        <Route path="/results" element={<ListPage />} />
-        <Route path="/score/:id" element={<ScorecardPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/results" element={<PrivateRoute><ListPage /></PrivateRoute>} />
+        <Route path="/score/:id" element={<PrivateRoute><ScorecardPage /></PrivateRoute>} />
+        <Route path="/dashboard" element={<PrivateRoute><DashboardPage /></PrivateRoute>} />
       </Routes>
     </BrowserRouter>
   )

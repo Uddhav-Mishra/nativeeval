@@ -1,28 +1,17 @@
-import base64
-from flask import Blueprint, request, jsonify
-import config
+from flask import Blueprint, jsonify
 from db import get_client
+from routes.auth import require_auth
+from limiter import limiter
 
 submissions_bp = Blueprint('submissions', __name__)
 
 
-def check_basic_auth():
-    header = request.headers.get('Authorization', '')
-    if not header.startswith('Basic '):
-        return False
-    try:
-        user, pw = base64.b64decode(header[6:]).decode().split(':', 1)
-    except Exception:
-        return False
-    return user == config.DASHBOARD_USERNAME and pw == config.DASHBOARD_PASSWORD
-
-
 @submissions_bp.route('/api/submissions', methods=['GET'])
+@limiter.limit("10 per minute")
 def list_submissions():
-    if not check_basic_auth():
-        resp = jsonify({'error': 'Unauthorized'})
-        resp.headers['WWW-Authenticate'] = 'Basic realm="dashboard"'
-        return resp, 401
+    err = require_auth()
+    if err:
+        return err
 
     db = get_client()
     result = db.table('submissions').select(

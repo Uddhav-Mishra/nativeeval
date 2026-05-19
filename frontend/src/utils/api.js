@@ -1,5 +1,10 @@
 const BASE = import.meta.env.VITE_API_URL || ''
 
+function authHeader() {
+  const creds = sessionStorage.getItem('dashboard_creds')
+  return creds ? { 'Authorization': `Basic ${creds}` } : {}
+}
+
 export async function analyzeTranscript(formData) {
   const res = await fetch(`${BASE}/api/analyze`, { method: 'POST', body: formData })
   if (!res.ok) {
@@ -10,7 +15,8 @@ export async function analyzeTranscript(formData) {
 }
 
 export async function getSubmission(id) {
-  const res = await fetch(`${BASE}/api/submissions/${id}`)
+  const res = await fetch(`${BASE}/api/submissions/${id}`, { headers: authHeader() })
+  if (res.status === 401) throw new Error('401')
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
@@ -26,7 +32,8 @@ export async function getSubmissions(username, password) {
 }
 
 export async function getResults() {
-  const res = await fetch(`${BASE}/api/results`)
+  const res = await fetch(`${BASE}/api/results`, { headers: authHeader() })
+  if (res.status === 401) throw new Error('401')
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
 }
