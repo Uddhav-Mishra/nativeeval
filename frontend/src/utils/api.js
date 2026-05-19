@@ -1,93 +1,26 @@
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+const BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000'
 
-export async function startSession(candidateName, candidateEmail) {
-  const res = await fetch(`${BASE_URL}/api/session/start`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ candidate_name: candidateName, candidate_email: candidateEmail })
+export async function analyzeTranscript(formData) {
+  const res = await fetch(`${BASE}/api/analyze`, { method: 'POST', body: formData })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}))
+    throw new Error(err.error || `HTTP ${res.status}`)
+  }
+  return res.json()
+}
+
+export async function getSubmission(id) {
+  const res = await fetch(`${BASE}/api/submissions/${id}`)
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  return res.json()
+}
+
+export async function getSubmissions(username, password) {
+  const creds = btoa(`${username}:${password}`)
+  const res = await fetch(`${BASE}/api/submissions`, {
+    headers: { 'Authorization': `Basic ${creds}` }
   })
+  if (res.status === 401) throw new Error('401')
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
   return res.json()
-}
-
-export async function getSession(sessionId) {
-  const res = await fetch(`${BASE_URL}/api/session/${sessionId}`)
-  return res.json()
-}
-
-export async function postCommit(sessionId, message, linkedTickets, files) {
-  const res = await fetch(`${BASE_URL}/api/commit`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ session_id: sessionId, message, linked_tickets: linkedTickets, files })
-  })
-  return res.json()
-}
-
-export async function completeTicket(ticketId, sessionId) {
-  const res = await fetch(`${BASE_URL}/api/ticket/${ticketId}/complete`, {
-    method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ session_id: sessionId })
-  })
-  return res.json()
-}
-
-export async function submitSession(sessionId) {
-  const res = await fetch(`${BASE_URL}/api/session/submit`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ session_id: sessionId })
-  })
-  return res.json()
-}
-
-export async function getScorecard(sessionId) {
-  const res = await fetch(`${BASE_URL}/api/scorecard/${sessionId}`)
-  return res.json()
-}
-
-export async function getTickets() {
-  const res = await fetch(`${BASE_URL}/api/tickets`)
-  return res.json()
-}
-
-export async function getInitialCode() {
-  const res = await fetch(`${BASE_URL}/api/initial-code`)
-  return res.json()
-}
-
-export function streamChat(sessionId, message, currentFiles, onChunk, onDone) {
-  const controller = new AbortController()
-
-  fetch(`${BASE_URL}/api/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ session_id: sessionId, message, current_files: currentFiles }),
-    signal: controller.signal
-  }).then(async res => {
-    const reader = res.body.getReader()
-    const decoder = new TextDecoder()
-
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-
-      const chunk = decoder.decode(value)
-      const lines = chunk.split('\n')
-
-      for (const line of lines) {
-        if (line.startsWith('data: ')) {
-          try {
-            const data = JSON.parse(line.slice(6))
-            if (data.text) onChunk(data.text)
-            if (data.done) onDone()
-          } catch {}
-        }
-      }
-    }
-  }).catch(err => {
-    if (err.name !== 'AbortError') console.error('Stream error:', err)
-  })
-
-  return () => controller.abort()
 }

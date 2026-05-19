@@ -1,5 +1,8 @@
-fastapi
-uvicorn[standard]
-sqlmodel
+flask
+flask-cors
+gunicorn
 openai
+supabase
 python-dotenv
+requests
+werkzeug

@@ -1,15 +1,16 @@
-import { Routes, Route, Navigate } from 'react-router-dom'
-import Landing from './components/Landing'
-import Workspace from './components/Workspace'
-import Scorecard from './components/Scorecard'
+import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import UploadPage from './components/UploadPage'
+import ScorecardPage from './components/ScorecardPage'
+import DashboardPage from './components/DashboardPage'
 
 export default function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Landing />} />
-      <Route path="/workspace" element={<Workspace />} />
-      <Route path="/scorecard/:id" element={<Scorecard />} />
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<UploadPage />} />
+        <Route path="/score/:id" element={<ScorecardPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+      </Routes>
+    </BrowserRouter>
   )
 }

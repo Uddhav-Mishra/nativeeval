@@ -1,11 +1,10 @@
-from sqlmodel import create_engine, SQLModel, Session
+from supabase import create_client, Client
+import config
 
-DATABASE_URL = "sqlite:///./nativeeval.db"
-engine = create_engine(DATABASE_URL, echo=True)
+_client = None
 
-def create_db_and_tables():
-    SQLModel.metadata.create_all(engine)
-
-def get_session():
-    with Session(engine) as session:
-        yield session
+def get_client() -> Client:
+    global _client
+    if _client is None:
+        _client = create_client(config.SUPABASE_URL, config.SUPABASE_SERVICE_KEY)
+    return _client
