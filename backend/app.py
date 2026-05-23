@@ -14,13 +14,17 @@ ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 env_origins = os.getenv("CORS_ORIGINS", "")
-ALLOWED_ORIGINS += [o.strip() for o in env_origins.split(",") if o.strip()]
+ALLOWED_ORIGINS += [o.strip().rstrip('/') for o in env_origins.split(",") if o.strip()]
+
+
+def _cors_origin(origin):
+    return origin.rstrip('/')
 
 
 @flask_app.before_request
 def handle_preflight():
     if request.method == 'OPTIONS':
-        origin = request.headers.get('Origin', '')
+        origin = _cors_origin(request.headers.get('Origin', ''))
         res = flask_app.make_default_options_response()
         if origin in ALLOWED_ORIGINS:
             res.headers['Access-Control-Allow-Origin'] = origin
@@ -32,7 +36,7 @@ def handle_preflight():
 
 @flask_app.after_request
 def add_cors(response):
-    origin = request.headers.get('Origin', '')
+    origin = _cors_origin(request.headers.get('Origin', ''))
     if origin in ALLOWED_ORIGINS:
         response.headers['Access-Control-Allow-Origin'] = origin
         response.headers['Access-Control-Allow-Credentials'] = 'true'
